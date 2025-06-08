@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIPARTY</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', cursive;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background-image: url('background.webp');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            overflow: hidden;
+        }
+
+        .mobile-message {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.2em;
+            line-height: 1.5;
+            z-index: 1000;
+        }
+
+        @media screen and (max-width: 768px) {
+            .game-board, .teams-container, .players-box {
+                display: none !important;
+            }
+            .mobile-message {
+                display: block;
+            }
+        }
+
+        .game-board {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: grid;
+            gap: 10px;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        .box {
+            width: 80px;
+            height: 80px;
+            background-color: white;
+            background-image: url('normal.webp');
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+
+        .box-number {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 0.5em;
+            color: #ff0000;
+            background-color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .box-start {
+            background-color: #00ff00;
+            color: #000;
+            font-size: 0.5em;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .box-victory {
+            background-color: #00ff00;
+            color: #000;
+            font-size: 0.5em;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .token {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            position: absolute;
+            border: 2px solid #000;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 3;
+        }
+
+        .token-1 { background-color: #FF6B6B; }
+        .token-2 { background-color: #87CEEB; }
+        .token-3 { background-color: #FFD93D; }
+        .token-4 { background-color: #FFA500; }
+        .token-5 { background-color: #FF8FB1; }
+        .token-6 { background-color: #7C9CBF; }
+        .token-7 { background-color: #B5EAD7; }
+        .token-8 { background-color: #8B4513; }
+        .token-9 { background-color: #0000FF; }
+        .token-10 { background-color: #A8E6CF; }
+
+        .teams-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            max-width: calc(100vw - 300px); /* Deja espacio para el cuadro de jugadores */
+        }
+
+        .team-box {
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            min-width: 120px;
+            flex: 0 0 auto;
+        }
+
+        .team-box h3 {
+            font-size: 0.6em;
+            margin-bottom: 10px;
+            text-align: center;
+            line-height: 1.4;
+            color: #000;
+        }
+
+        .team-box input[type="number"] {
+            width: 100%;
+            padding: 6px;
+            border: 2px solid #333;
+            border-radius: 4px;
+            font-size: 0.6em;
+            text-align: center;
+            background-color: white;
+        }
+
+        /* Colores para los equipos */
+        .team-1 { background-color: #FF6B6B; }
+        .team-2 { background-color: #87CEEB; }
+        .team-3 { background-color: #FFD93D; }
+        .team-4 { background-color: #FFA500; }
+        .team-5 { background-color: #FF8FB1; }
+        .team-6 { background-color: #7C9CBF; }
+        .team-7 { background-color: #B5EAD7; }
+        .team-8 { background-color: #8B4513; }
+        .team-9 { background-color: #0000FF; }
+        .team-10 { background-color: #A8E6CF; }
+
+        .players-box {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 250px;
+        }
+
+        .players-box h1 {
+            font-size: 0.8em;
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .players-box h2 {
+            font-size: 0.6em;
+            margin-bottom: 15px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 6px;
+            border: 2px solid #333;
+            border-radius: 4px;
+            font-size: 0.6em;
+            text-align: center;
+        }
+
+        button {
+            padding: 6px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 0.6em;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Estilo para el placeholder del input */
+        input[type="number"]::placeholder {
+            font-size: 0.7em;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-message">
+        Només disponible per ordinador!
+    </div>
+    <div class="teams-container" id="teamsContainer">
+        <!-- Los equipos se generarán dinámicamente con JavaScript -->
+    </div>
+
+    <div class="players-box">
+        <h1>Tornar a començar</h1>
+        <h2>Jugadors</h2>
+        <div class="input-group">
+            <input type="number" id="playersInput" min="1" max="10" value="4">
+            <button onclick="savePlayers()">Guardar</button>
+        </div>
+    </div>
+
+    <div class="game-board" id="gameBoard">
+        <!-- Las casillas se generarán dinámicamente con JavaScript -->
+    </div>
+    <canvas id="connectionCanvas"></canvas>
+
+    <script>
+        let players = 4;
+        let teamScores = [];
+        let boxPositions = [];
+
+        // Definir el orden exacto de las casillas
+        const spaceOrder = [
+            'start', // Start
+            '5_Space', // +5
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty
+            '6_Space', // +6
+            'normal', // empty
+            '4_Space', // +4
+            'normal', // 1 vs 3 Minigame
+            'normal', // empty
+            'normal', // empty
+            'UFO_Space', // UFO
+            '4_Space', // +4
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty
+            'Tornado_Space', // Tornado
+            '-4_Space', // -4
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty (The red statue will throw you here)
+            'normal', // 1 vs 3 Minigame
+            'Blue_Statue_Space', // Blue Statue
+            'Skull_Space', // Skull and Crossbones
+            'Blue_Statue_Space', // Blue Statue
+            'normal', // empty
+            'normal', // empty
+            'Dinosaur_Space', // Dinosaur Space (-9 spaces for a red tyrannosaur)
+            '5_Space', // +5
+            'normal', // Volcano Space
+            'Tornado_Space', // Tornado Space
+            'normal', // empty
+            '6_Space', // +6
+            'normal', // 1 vs 1 Minigame
+            'UFO_Space', // UFO
+            'normal', // empty
+            'normal', // empty
+            '5_Space', // +5
+            'Red_Statue_Space', // Red Statue
+            'Dinosaur_Space', // Dinosaur Space (-4 spaces for a red tyrannosaur)
+            'normal', // empty (The blue statues will throw you here)
+            'normal', // 1 vs 3 Minigame
+            'normal', // empty
+            '6_Space', // +6
+            'normal', // 1 vs 1 Minigame
+            'normal', // empty
+            '5_Space', // +5
+            'normal', // empty
+            '4_Space', // +4
+            'UFO_Space', // UFO
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty
+            '6_Space', // +6
+            'normal', // 1 vs 1 Minigame
+            'normal', // empty
+            'normal', // empty
+            '4_Space', // +4
+            'normal', // empty
+            'Tornado_Space', // Tornado Space
+            '-4_Space', // -4
+            'normal', // empty
+            'Skull_Space', // Skull and Crossbones
+            'Tornado_Space', // Tornado Space
+            'normal', // empty
+            'normal', // empty
+            'normal', // empty
+            'UFO_Space', // UFO
+            '-4_Space' // -4
+        ];
+
+        function createGameBoard() {
+            const board = document.getElementById('gameBoard');
+            board.innerHTML = '';
+            
+            // Calcular el número de columnas que caben en la pantalla
+            const boxWidth = 80; // ancho de cada casilla
+            const gap = 10; // espacio entre casillas
+            const padding = 20; // padding del contenedor
+            const availableWidth = window.innerWidth - padding * 2;
+            const columnsPerRow = Math.floor((availableWidth + gap) / (boxWidth + gap));
+            
+            // Calcular el número de filas necesarias
+            const totalRows = Math.ceil(74 / columnsPerRow);
+            
+            // Crear las casillas en forma de serpiente
+            let currentRow = totalRows - 1;
+            let currentCol = 0;
+            let goingRight = true;
+
+            // Array para almacenar las posiciones de las casillas
+            boxPositions = [];
+
+            // Primero crear la casilla 0 (INICI)
+            const startBox = document.createElement('div');
+            startBox.className = 'box box-start';
+            startBox.innerHTML = 'INICI';
+            startBox.style.gridRow = currentRow + 1;
+            startBox.style.gridColumn = currentCol + 1;
+            board.appendChild(startBox);
+            boxPositions[0] = { row: currentRow, col: currentCol };
+
+            // Actualizar posición para la siguiente casilla
+            if (goingRight) {
+                currentCol++;
+                if (currentCol >= columnsPerRow) {
+                    currentRow--;
+                    currentCol = columnsPerRow - 1;
+                    goingRight = false;
+                }
+            } else {
+                currentCol--;
+                if (currentCol < 0) {
+                    currentRow--;
+                    currentCol = 0;
+                    goingRight = true;
+                }
+            }
+
+            // Crear el resto de casillas (1-73)
+            for (let i = 1; i <= 73; i++) {
+                const box = document.createElement('div');
+                box.className = 'box';
+                
+                // Añadir clase especial para la casilla de victoria
+                if (i === 73) {
+                    box.className += ' box-victory';
+                    box.innerHTML = 'FINAL!';
+                } else {
+                    const spaceType = spaceOrder[i];
+                    if (spaceType !== 'normal' && spaceType !== 'start') {
+                        box.style.backgroundImage = `url('casillas/${spaceType}.webp')`;
+                    }
+                    box.innerHTML = `<span class="box-number">${i}</span>`;
+                }
+                
+                // Posicionar la casilla
+                box.style.gridRow = currentRow + 1;
+                box.style.gridColumn = currentCol + 1;
+                
+                board.appendChild(box);
+                boxPositions[i] = { row: currentRow, col: currentCol };
+
+                // Actualizar posición para la siguiente casilla
+                if (goingRight) {
+                    currentCol++;
+                    if (currentCol >= columnsPerRow) {
+                        currentRow--;
+                        currentCol = columnsPerRow - 1;
+                        goingRight = false;
+                    }
+                } else {
+                    currentCol--;
+                    if (currentCol < 0) {
+                        currentRow--;
+                        currentCol = 0;
+                        goingRight = true;
+                    }
+                }
+            }
+
+            // Ajustar el grid
+            board.style.gridTemplateColumns = `repeat(${columnsPerRow}, ${boxWidth}px)`;
+            board.style.gridTemplateRows = `repeat(${totalRows}, ${boxWidth}px)`;
+
+            // Crear las boletas para cada equipo
+            createTokens(boxPositions);
+
+            // Dibujar las conexiones
+            drawConnections();
+        }
+
+        function drawConnections() {
+            const canvas = document.getElementById('connectionCanvas');
+            const board = document.getElementById('gameBoard');
+            const boxWidth = 80;
+            const gap = 10;
+            const padding = 20;
+
+            // Ajustar el tamaño del canvas al tamaño del tablero
+            canvas.width = board.offsetWidth;
+            canvas.height = board.offsetHeight;
+            canvas.style.position = 'fixed';
+            canvas.style.bottom = '20px';
+            canvas.style.left = '20px';
+            canvas.style.pointerEvents = 'none';
+            canvas.style.zIndex = '1';
+
+            const ctx = canvas.getContext('2d');
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 2;
+
+            // Dibujar las conexiones entre casillas
+            for (let i = 0; i < boxPositions.length - 1; i++) {
+                const current = boxPositions[i];
+                const next = boxPositions[i + 1];
+
+                // Calcular las coordenadas centrales de las casillas
+                const currentX = (current.col * (boxWidth + gap)) + (boxWidth / 2) + padding;
+                const currentY = (current.row * (boxWidth + gap)) + (boxWidth / 2) + padding;
+                const nextX = (next.col * (boxWidth + gap)) + (boxWidth / 2) + padding;
+                const nextY = (next.row * (boxWidth + gap)) + (boxWidth / 2) + padding;
+
+                // Dibujar la línea
+                ctx.beginPath();
+                ctx.moveTo(currentX, currentY);
+                ctx.lineTo(nextX, nextY);
+                ctx.stroke();
+            }
+        }
+
+        function createTokens(boxPositions) {
+            const board = document.getElementById('gameBoard');
+            
+            // Eliminar boletas existentes
+            const existingTokens = document.querySelectorAll('.token');
+            existingTokens.forEach(token => token.remove());
+
+            // Crear nuevas boletas para cada equipo
+            for (let i = 0; i < players; i++) {
+                const token = document.createElement('div');
+                token.className = `token token-${i + 1}`;
+                const position = boxPositions[teamScores[i]];
+                
+                // Calcular la posición absoluta dentro de la casilla
+                const boxWidth = 80;
+                const boxHeight = 80;
+                const tokenSize = 30;
+                
+                // Calcular el offset diagonal
+                const offsetX = (i % 2 === 0) ? 10 : -10; // Alternar entre derecha e izquierda
+                const offsetY = -15 + (i * 5); // Mover cada ficha un poco más arriba
+                
+                // Posicionar la boleta
+                token.style.gridRow = position.row + 1;
+                token.style.gridColumn = position.col + 1;
+                token.style.margin = `${offsetY}px ${offsetX}px`;
+                
+                board.appendChild(token);
+            }
+        }
+
+        function createTeamBoxes() {
+            const container = document.getElementById('teamsContainer');
+            container.innerHTML = '';
+            teamScores = new Array(players).fill(0);
+
+            for (let i = 0; i < players; i++) {
+                const teamBox = document.createElement('div');
+                teamBox.className = `team-box team-${i + 1}`;
+                teamBox.innerHTML = `
+                    <h3>Equip ${i + 1}</h3>
+                    <input type="number" 
+                           id="team${i + 1}Score" 
+                           min="0" 
+                           max="73" 
+                           value="0"
+                           onchange="updateTeamScore(${i}, this.value)">
+                `;
+                container.appendChild(teamBox);
+            }
+        }
+
+        function updateTeamScore(index, value) {
+            const numValue = parseInt(value);
+            if (numValue >= 0 && numValue <= 73) {
+                teamScores[index] = numValue;
+                console.log('Puntuaciones actualizadas:', teamScores);
+                // Recrear el tablero para actualizar las posiciones de las boletas
+                createGameBoard();
+            } else {
+                alert('La puntuación debe estar entre 0 y 73');
+                document.getElementById(`team${index + 1}Score`).value = teamScores[index];
+            }
+        }
+
+        function savePlayers() {
+            const input = document.getElementById('playersInput');
+            const value = parseInt(input.value);
+            
+            if (value >= 1 && value <= 10) {
+                players = value;
+                createTeamBoxes();
+                createGameBoard(); // Recrear el tablero para actualizar las boletas
+                console.log('Número de jugadores guardado:', players);
+            } else {
+                alert('El número de jugadores debe estar entre 1 y 10');
+                input.value = players;
+            }
+        }
+
+        // Inicializar los equipos y el tablero al cargar la página
+        createTeamBoxes();
+        createGameBoard();
+
+        // Redimensionar el tablero cuando cambie el tamaño de la ventana
+        window.addEventListener('resize', createGameBoard);
+    </script>
+</body>
+</html>
