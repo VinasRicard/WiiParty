@@ -75,6 +75,90 @@
             z-index: 2;
         }
 
+        .special-block {
+            width: 30px;
+            height: 80px;
+            background-color: #FFD700;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transform: translateX(85px);
+        }
+
+        .wall-block {
+            width: 30px;
+            height: 80px;
+            background-color: #B22222;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transform: translateX(85px);
+        }
+
+        .image-block {
+            width: 50px;
+            height: 100px;
+            background-color: transparent;
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 3;
+            transform: translateX(75px);
+        }
+
+        .image-block .circle-container {
+            width: 50px;
+            height: 50px;
+            background-color: #B22222;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-block .white-circle {
+            width: 50px;
+            height: 50px;
+            background-color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .image-block img {
+            width: 80%;
+            height: 80%;
+            object-fit: contain;
+        }
+
+        .special-block span {
+            transform: rotate(-90deg);
+            font-size: 0.8em;
+            color: #000;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .wall-block span {
+            transform: rotate(-90deg);
+            font-size: 0.8em;
+            color: #fff;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
         .box-number {
             position: absolute;
             top: 5px;
@@ -419,6 +503,56 @@
                 
                 board.appendChild(box);
                 boxPositions[i] = { row: currentRow, col: currentCol };
+
+                // Añadir el bloque especial entre las casillas 6 y 7
+                if (i === 6) {
+                    const specialBlock = document.createElement('div');
+                    specialBlock.className = 'special-block';
+                    specialBlock.innerHTML = '<span>LIANA</span>';
+                    specialBlock.style.gridRow = currentRow + 1;
+                    specialBlock.style.gridColumn = currentCol + 1;
+                    board.appendChild(specialBlock);
+                }
+
+                // Añadir el bloque especial entre las casillas 23 y 24
+                if (i === 23) {
+                    const specialBlock = document.createElement('div');
+                    specialBlock.className = 'wall-block';
+                    specialBlock.innerHTML = '<span>MUR</span>';
+                    specialBlock.style.gridRow = currentRow + 1;
+                    specialBlock.style.gridColumn = currentCol + 1;
+                    board.appendChild(specialBlock);
+                }
+
+                // Añadir el bloque especial entre las casillas 40 y 41
+                if (i === 40) {
+                    const specialBlock = document.createElement('div');
+                    specialBlock.className = 'image-block';
+                    specialBlock.innerHTML = '<div class="white-circle"><img src="barril.png" alt="Barril"></div>';
+                    specialBlock.style.gridRow = currentRow + 1;
+                    specialBlock.style.gridColumn = currentCol + 1;
+                    board.appendChild(specialBlock);
+                }
+
+                // Añadir el bloque especial entre las casillas 46 y 47
+                if (i === 46) {
+                    const specialBlock = document.createElement('div');
+                    specialBlock.className = 'image-block';
+                    specialBlock.innerHTML = '<div class="white-circle"><img src="skull.png" alt="Skull"></div>';
+                    specialBlock.style.gridRow = currentRow + 1;
+                    specialBlock.style.gridColumn = currentCol + 1;
+                    board.appendChild(specialBlock);
+                }
+
+                // Añadir el bloque especial entre las casillas 57 y 58
+                if (i === 57) {
+                    const specialBlock = document.createElement('div');
+                    specialBlock.className = 'image-block';
+                    specialBlock.innerHTML = '<div class="circle-container"><img src="spikeball.webp" alt="Spikeball"></div>';
+                    specialBlock.style.gridRow = currentRow + 1;
+                    specialBlock.style.gridColumn = currentCol + 1;
+                    board.appendChild(specialBlock);
+                }
 
                 // Actualizar posición para la siguiente casilla
                 if (goingRight) {
